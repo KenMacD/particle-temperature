@@ -1,9 +1,7 @@
 #include <Particle.h>
 
-#if 0
+SYSTEM_MODE(MANUAL);
 SYSTEM_THREAD(ENABLED);
-SYSTEM_MODE(AUTOMATIC);
-#endif
 
 #include "math.h"
 
@@ -66,19 +64,28 @@ static double var_dewpoint = 0;
 system_tick_t last_connect;
 
 void setup() {
+
+    // Start the Mesh:
+    Mesh.on();
+    Mesh.connect();
+    waitUntil(Mesh.ready);
+
+    // Add Particle functions and variables
     Particle.function("set_name", set_name);
     Particle.function("get_name", get_name);
     Particle.function("reset", do_reset);
+    Particle.variable("temperature", var_temperature);
+    Particle.variable("humidity", var_humidity);
+    Particle.variable("dewpoint", var_dewpoint);
+
+    // Connect to the particle cloud
+    Particle.connect();
 
     EEPROM.get(0, name);
     last_connect = millis();
     save_i = 0;
     values_needed = AVG_ACROSS;
     report_ctr = 0;
-
-    Particle.variable("temperature", var_temperature);
-    Particle.variable("humidity", var_humidity);
-    Particle.variable("dewpoint", var_dewpoint);
 
     while (!htu.begin()) {
         Log.warn("Not connected to sensor");
@@ -169,8 +176,7 @@ void loop() {
         char event_name[64];
         snprintf(event_name, sizeof(event_name), "temperature/%.4s/is", (char *)&name);
 
-        publish_priv(event_name, data);
-        // Mesh.publish(event_name, data);
+        Mesh.publish(event_name, data);
 
         char buffer[128];
         snprintf(buffer, sizeof(buffer), "thermostat,zone=%.4s "
