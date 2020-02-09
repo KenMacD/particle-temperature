@@ -16,6 +16,8 @@ export PLATFORM
 APPDIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 export APPDIR
 
+CC_TARGET ?= --target 1.4.4
+
 FIRMWARE_PATH ?= $(APPDIR)/../device-os/
 
 all:
@@ -23,7 +25,7 @@ all:
 #	$(MAKE) -C $(FIRMWARE_PATH)/main all
 
 cc:
-	particle compile --saveTo target/temperature.bin xenon
+	particle compile $(CC_TARGET) --saveTo target/temperature.bin xenon
 
 flash:
 	particle usb start-listening && particle flash --serial target/temperature.bin -vv
