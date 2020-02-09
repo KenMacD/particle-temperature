@@ -30,6 +30,9 @@ cc:
 flash:
 	particle usb start-listening && particle flash --serial target/temperature.bin -vv
 
+flashusb:
+	particle usb dfu && sleep 5 && particle flash --usb target/temperature.bin -vv
+
 clean:
 	$(MAKE) -C $(FIRMWARE_PATH)/user clean
 	-$(RM) -r target/
