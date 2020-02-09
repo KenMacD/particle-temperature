@@ -118,6 +118,7 @@ void loop() {
 #endif
 
     if (!Particle.connected()) {
+        Particle.connect();
         if (now - last_connect > 300 * 1000UL) {
             System.reset();
         }
