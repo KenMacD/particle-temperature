@@ -63,7 +63,18 @@ static double var_dewpoint = 0;
 
 system_tick_t last_connect;
 
+#if 0
+// Run once on the gateway Xenon
+STARTUP(System.enableFeature(FEATURE_ETHERNET_DETECTION));
+#endif
+
 void setup() {
+
+    // Start Ethernet if on the gateway
+    if (System.featureEnabled(FEATURE_ETHERNET_DETECTION)) {
+        Ethernet.on();
+        Ethernet.connect();
+    }
 
     // Start the Mesh:
     Mesh.on();
